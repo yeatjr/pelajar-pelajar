@@ -1,0 +1,4 @@
+git clone https://github.com/Worklenz/worklenz.git
+cd worklenz-frontend
+npm install
+npm start
