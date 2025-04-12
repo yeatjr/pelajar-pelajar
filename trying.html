@@ -1,110 +1,85 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GenBoard UI</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-indigo-200 p-6">
+  <div class="max-w-6xl mx-auto space-y-8">
+    <header class="flex justify-between items-center py-4">
+      <h1 class="text-4xl font-bold text-blue-900">GenBoard</h1>
+      <button class="bg-blue-700 text-white px-4 py-2 rounded">Start Your Onboarding Journey</button>
+    </header>
 
-export default function GenBoardUI() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 p-6">
-      <div className="max-w-6xl mx-auto space-y-8">
-        <header className="flex justify-between items-center py-4">
-          <h1 className="text-4xl font-bold text-blue-900">GenBoard</h1>
-          <Button>Start Your Onboarding Journey</Button>
-        </header>
+    <section class="text-center">
+      <h2 class="text-3xl font-bold">Welcome. Learn. Integrate. Faster.</h2>
+      <p class="text-gray-700 mt-2">Transforming onboarding with generative AI</p>
+    </section>
 
-        <section className="text-center">
-          <h2 className="text-3xl font-bold">Welcome. Learn. Integrate. Faster.</h2>
-          <p className="text-gray-700 mt-2">Transforming onboarding with generative AI</p>
-        </section>
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div class="bg-white rounded-xl shadow p-4">
+        <p class="text-sm text-gray-600">Hello! How can I assist you today?</p>
+        <input class="mt-2 border rounded w-full px-2 py-1" placeholder="What’s the tech stack of Project Alpha?">
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {/* AI Assistant */}
-          <Card>
-            <CardContent className="p-4">
-              <p className="text-sm text-gray-600">Hello! How can I assist you today?</p>
-              <Input placeholder="What’s the tech stack of Project Alpha?" className="mt-2" />
-            </CardContent>
-          </Card>
+      <div class="bg-white rounded-xl shadow p-4">
+        <h3 class="font-semibold mb-2">Personalized Learning Plan</h3>
+        <ol class="list-decimal list-inside text-sm space-y-1">
+          <li>Company Overview</li>
+          <li>Development Environment</li>
+          <li>Product Architecture</li>
+        </ol>
+      </div>
 
-          {/* Personalized Learning Plan */}
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Personalized Learning Plan</h3>
-              <ul className="list-decimal list-inside text-sm space-y-1">
-                <li>Company Overview</li>
-                <li>Development Environment</li>
-                <li>Product Architecture</li>
-              </ul>
-            </CardContent>
-          </Card>
+      <div class="bg-white rounded-xl shadow p-4">
+        <h3 class="font-semibold mb-2">Meeting Scheduler</h3>
+        <input type="date" class="mb-2 w-full border rounded px-2 py-1">
+        <button class="bg-blue-700 text-white px-4 py-2 rounded">Schedule Meeting</button>
+      </div>
 
-          {/* Meeting Scheduler */}
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Meeting Scheduler</h3>
-              <Calendar className="mb-2" />
-              <Button>Schedule Meeting</Button>
-            </CardContent>
-          </Card>
+      <div class="bg-white rounded-xl shadow p-4">
+        <h3 class="font-semibold mb-2">Knowledge Center</h3>
+        <ul class="text-sm space-y-1">
+          <li>John Smith - In Progress</li>
+          <li>Jane Doe - Not Started</li>
+          <li>Emily Johnson - Completed</li>
+          <li>Michael Brown - Onboarding</li>
+        </ul>
+      </div>
 
-          {/* Knowledge Center */}
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Knowledge Center</h3>
-              <ul className="space-y-1 text-sm">
-                <li>John Smith - In Progress</li>
-                <li>Jane Doe - Not Started</li>
-                <li>Emily Johnson - Completed</li>
-                <li>Michael Brown - Onboarding</li>
-              </ul>
-            </CardContent>
-          </Card>
+      <div class="bg-white rounded-xl shadow p-4">
+        <h3 class="font-semibold mb-2">Meet Your Team</h3>
+        <div class="flex gap-3 mb-3">
+          <div class="bg-blue-300 text-white rounded-full w-10 h-10 flex items-center justify-center">JS</div>
+          <div class="bg-blue-300 text-white rounded-full w-10 h-10 flex items-center justify-center">JD</div>
+          <div class="bg-blue-300 text-white rounded-full w-10 h-10 flex items-center justify-center">EJ</div>
+          <div class="bg-blue-300 text-white rounded-full w-10 h-10 flex items-center justify-center">MB</div>
+        </div>
+        <button class="bg-blue-700 text-white px-4 py-2 rounded">Book 1:1</button>
+      </div>
 
-          {/* Meet Your Team */}
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Meet Your Team</h3>
-              <div className="flex gap-3 mb-3">
-                {["JS", "JD", "EJ", "MB"].map((initials, i) => (
-                  <Avatar key={i}>
-                    <AvatarFallback>{initials}</AvatarFallback>
-                  </Avatar>
-                ))}
-              </div>
-              <Button>Book 1:1</Button>
-            </CardContent>
-          </Card>
+      <div class="bg-white rounded-xl shadow p-4">
+        <h3 class="font-semibold mb-2">AI-Generated Onboarding Plans</h3>
+        <ul class="text-sm space-y-1">
+          <li>✔ Project Setup</li>
+          <li>✔ Code Review Training</li>
+          <li>✔ Initial Team Meeting</li>
+          <li>✔ Address Access</li>
+        </ul>
+      </div>
 
-          {/* AI Onboarding Plan */}
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">AI-Generated Onboarding Plans</h3>
-              <ul className="text-sm space-y-1">
-                <li>✔ Project Setup</li>
-                <li>✔ Code Review Training</li>
-                <li>✔ Initial Team Meeting</li>
-                <li>✔ Address Access</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          {/* Feedback Loop */}
-          <Card className="col-span-1 md:col-span-2 xl:col-span-3">
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Quick Pulse Checks</h3>
-              <p className="text-sm mb-2">How confident do you feel about today’s task?</p>
-              <div className="flex gap-3">
-                <Button variant="outline">Not Confident</Button>
-                <Button variant="outline">Somewhat</Button>
-                <Button variant="default">Very Confident</Button>
-              </div>
-            </CardContent>
-          </Card>
+      <div class="bg-white rounded-xl shadow p-4 col-span-1 md:col-span-2 xl:col-span-3">
+        <h3 class="font-semibold mb-2">Quick Pulse Checks</h3>
+        <p class="text-sm mb-2">How confident do you feel about today’s task?</p>
+        <div class="flex gap-3">
+          <button class="border px-4 py-2 rounded">Not Confident</button>
+          <button class="border px-4 py-2 rounded">Somewhat</button>
+          <button class="bg-blue-700 text-white px-4 py-2 rounded">Very Confident</button>
         </div>
       </div>
     </div>
-  );
-}
+  </div>
+</body>
+</html>
