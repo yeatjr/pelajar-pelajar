@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Onboarding Timeline</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --primary-green: #96F027;
+      --primary-blue: #007CF7;
+      --light-gray: #f5f5f5;
+      --text-dark: #111;
+      --accent-orange: #FF6B35;
+      --accent-purple: #6E44FF;
+      --background-light: #ffffff;
+      --gray: #f5f5f5;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-gray);
+      color: var(--text-dark);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 200px;
+      background-color: var(--primary-green);
+      min-height: 100vh;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: fixed;
+      height: 100%;
+    }
+
+    .pixel-logo {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1rem;
+      margin-bottom: 30px;
+      color: var(--text-dark);
+      line-height: 1.4;
+    }
+
+    .sidebar nav ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar nav li {
+      margin-bottom: 15px;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar nav li:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+      transform: translateX(5px);
+    }
+
+    .sidebar nav li.active {
+      background-color: rgba(0, 0, 0, 0.08);
+      font-weight: bold;
+    }
+
+    .sidebar nav li i {
+      width: 20px;
+      color: #111;
+    }
+
+    .sidebar nav li a {
+      color: inherit;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .sidebar nav li a:hover {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .divider {
+      height: 1px;
+      background-color: rgba(0, 0, 0, 0.1);
+      margin: 20px 0;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .user-profile:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    .profile-icon {
+      width: 36px;
+      height: 36px;
+      background-color: var(--primary-blue);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .user-info {
+      margin-left: 10px;
+    }
+    
+    .user-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .user-role {
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 40px;
+      margin-left: 200px;
+      background: white;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 50px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background-color: var(--primary-blue);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -40px;
+      top: 5px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: var(--primary-blue);
+      border: 3px solid white;
+    }
+
+    .timeline-date {
+      font-weight: bold;
+      color: var(--primary-blue);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .highlight {
+      border: 2px solid var(--primary-blue);
+      background-color: #e6f2ff;
+    }
+
+    .card {
+      transition: all 0.3s ease;
+    }
+
+    .card.collapsed .card-body {
+      display: none;
+    }
+
+    .toggle-icon {
+      transition: transform 0.3s ease;
+    }
+
+    .toggle-icon.collapsed {
+      transform: rotate(-90deg);
+    }
+
+    .progress-container {
+      margin-top: 15px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .progress {
+      height: 8px;
+      border-radius: 4px;
+    }
+
+    .progress-bar {
+      background-color: var(--primary-green);
+    }
+
+    .task-checkbox {
+      margin-right: 10px;
+    }
+
+    .task-completed {
+      text-decoration: line-through;
+      color: #666;
+    }
+
+    .task-details {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 5px;
+      padding-left: 30px;
+    }
+
+    .assignments-section {
+      margin-top: 20px;
+      border-top: 1px solid var(--light-gray);
+      padding-top: 15px;
+    }
+
+    .assignment-item {
+      margin-bottom: 15px;
+    }
+
+    .assignment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--primary-blue);
+    }
+
+    .assignment-details {
+      display: none;
+      font-size: 0.85rem;
+      color: #666;
+      padding: 10px;
+      background-color: var(--light-gray);
+      border-radius: 6px;
+      margin-top: 5px;
+    }
+
+    .assignment-details.show {
+      display: block;
+    }
+
+    .ai-assistant {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: var(--primary-blue);
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 124, 247, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+    
+    .ai-assistant:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(0, 124, 247, 0.4);
+    }
+    
+    .ai-assistant i {
+      font-size: 1.5rem;
+    }
+
+    .ai-modal {
+      display: none;
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      width: 300px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      z-index: 101;
+      padding: 20px;
+    }
+    
+    .ai-modal h5 {
+      color: var(--primary-blue);
+      margin-bottom: 15px;
+    }
+    
+    .ai-message {
+      background-color: var(--light-gray);
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+    }
+    
+    .ai-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .ai-option {
+      padding: 8px 12px;
+      background-color: #f8f9fa;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.85rem;
+    }
+    
+    .ai-option:hover {
+      background-color: #e9ecef;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 60px;
+        overflow: hidden;
+      }
+      .sidebar nav li span {
+        display: none;
+      }
+      .pixel-logo {
+        font-size: 0.7rem;
+      }
+      .main-content {
+        margin-left: 60px;
+        padding: 20px;
+      }
+      .ai-modal {
+        width: 280px;
+        right: 10px;
+      }
+      .timeline {
+        padding-left: 30px;
+      }
+      .timeline-item::before {
+        left: -30px;
+      }
+      .timeline::before {
+        left: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div>
+      <h1 class="pixel-logo">Bit.Buddy</h1>
+      <nav>
+        <ul>
+          <li>
+            <a href="homepage(newhires).html">
+              <i class="fas fa-home"></i> <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="active">
+            <a href="timeline(newhires).html">
+              <i class="fas fa-clock"></i> <span>Timeline</span>
+            </a>
+          </li>
+          <li>
+            <a href="document(newhires).html">
+              <i class="fas fa-file-alt"></i> <span>Documents</span>
+            </a>
+          </li>
+          <li>
+            <a href="resources(newhires).html">
+              <i class="fas fa-book"></i> <span>Resources</span>
+            </a>
+          </li>
+          <li>
+            <a href="team(newhires).html">
+              <i class="fas fa-users"></i> <span>Team</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div class="user-profile">
+      <div class="profile-icon">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="user-info">
+        <div class="user-name">Alex Chen</div>
+        <div class="user-role">New Hire Mode</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="timeline">
+      <h2 class="mb-4">Your 12-Month Onboarding Journey</h2>
+      <p class="mb-4">Our AI-powered timeline adapts to your progress and provides personalized recommendations at each stage.</p>
+      <p class="mt-3"><em>If you have any questions, seek help in <strong>Team</strong>.</em></p>
+    
+      <!-- Month 1 -->
+      <div class="timeline-item">
+        <div class="card p-3 collapsed">
+          <div class="timeline-date" data-bs-toggle="collapse" data-bs-target="#month1">
+            <i class="fas fa-chevron-down toggle-icon collapsed"></i> ✅ Month 1 - Orientation (Completed)
+          </div>
+          <div class="card-body collapse" id="month1">
+            <h5>Pre-boarding & First Impressions</h5>
+            <p>Complete essential paperwork, set up your workspace, and meet your team to kickstart your journey.</p>
+            <div class="progress-container">
+              <div class="progress-label">
+                <span>Progress (Day 30/30)</span>
+                <span>100%</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" style="width: 100%"></div>
+              </div>
+            </div>
+            <ul class="list-unstyled mt-3">
+              <li class="d-flex align-items-center mb-2">
+                <input type="checkbox" class="task-checkbox" data-task-id="m1-1" checked disabled>
+                <span class="task-completed" data-bs-toggle="tooltip" data-bs-placement="top" title="Submit tax forms, NDA, and handbook acknowledgment">📄 Submitted onboarding documents</span>
+                <span class="ms-2 badge bg-success">Score: 9/10</span>
+              </li>
+              <li class="task-details">Required tax forms, NDA, and employee handbook acknowledgment. Missed one optional form.</li>
+              <li class="d-flex align-items-center mb-2">
+                <input type="checkbox" class="task-checkbox" data-task-id="m1-2" checked disabled>
+                <span class="task-completed" data-bs-toggle="tooltip" data-bs-placement="top" title="Set up laptop, email, and software tools">🖥️ Workspace and tools set up</span>
+                <span class="ms-2 badge bg-success">Score: 8/10</span>
+              </li>
+              <li class="task-details">Configured laptop, email, and development tools. Minor delay in software installation.</li>
+              <li class="d-flex align-items-center mb-2">
+                <input type="checkbox" class="task-checkbox" data-task-id="m1-3" checked disabled>
+                <span class="task-completed" data-bs-toggle="tooltip" data-bs-placement="top" title="Meet at least 5 team members and your manager">👋 First team introductions</span>
+                <span class="ms-2 badge bg-success">Score: 10/10</span>
+              </li>
+              <li class="task-details">Met 7 team members and manager, exceeding the requirement.</li>
+            </ul>
+            <p><strong>Task Completion:</strong> 3/3 (100%)</p>
+            <p><strong>Comment:</strong> Great job, Alex! You’ve successfully completed your orientation.</p>
+            <div class="assignments-section">
+              <h6>Previous Assignments</h6>
+              <div class="assignment-item">
+                <div class="assignment-header" data-bs-toggle="collapse" data-bs-target="#assignment1">
+                  Onboarding Documents Submission
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="assignment-details collapse" id="assignment1">
+                  <p><strong>Status:</strong> Completed (Submitted on Day 25)</p>
+                  <p><strong>Score:</strong> 9/10</p>
+                  <p><strong>Feedback:</strong> Great work, but ensure all optional forms are submitted next time.</p>
+                  <p><strong>Details:</strong> Submitted tax forms, NDA, and handbook acknowledgment. Optional benefits form was not included.</p>
+                </div>
+              </div>
+              <div class="assignment-item">
+                <div class="assignment-header" data-bs-toggle="collapse" data-bs-target="#assignment2">
+                  Workspace and Tools Setup
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="assignment-details collapse" id="assignment2">
+                  <p><strong>Status:</strong> Completed (Submitted on Day 28)</p>
+                  <p><strong>Score:</strong> 8/10</p>
+                  <p><strong>Feedback:</strong> Solid setup, but software installation was delayed by a day.</p>
+                  <p><strong>Details:</strong> Configured laptop, email, and tools like VS Code and Git.</p>
+                </div>
+              </div>
+              <div class="assignment-item">
+                <div class="assignment-header" data-bs-toggle="collapse" data-bs-target="#assignment3">
+                  First Team Introductions
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="assignment-details collapse" id="assignment3">
+                  <p><strong>Status:</strong> Completed (Submitted on Day 30)</p>
+                  <p><strong>Score:</strong> 10/10</p>
+                  <p><strong>Feedback:</strong> Excellent engagement with the team!</p>
+                  <p><strong>Details:</strong> Met 7 team members, including a 1:1 with manager Sarah Johnson.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Month 2 -->
+      <div class="timeline-item highlight">
+        <div class="card p-3">
+          <div class="timeline-date" data-bs-toggle="collapse" data-bs-target="#month2">
+            <i class="fas fa-chevron-down toggle-icon"></i> Month 2 - Training (Day 13)
+          </div>
+          <div class="card-body" id="month2">
+            <h5>Technical & Process Training</h5>
+            <p>Deep dive into our tech stack, coding standards, and development processes.</p>
+            <div class="progress-container">
+              <div class="progress-label">
+                <span>Progress (Day 13/30)</span>
+                <span>43%</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" style="width: 43%"></div>
+              </div>
+            </div>
+            <ul class="list-unstyled mt-3">
+              <li class="d-flex align-items-center mb-2">
+                <input type="checkbox" class="task-checkbox" data-task-id="m2-1" checked disabled>
+                <span class="task-completed" data-bs-toggle="tooltip" data-bs-placement="top" title="Attended React and Node.js session">🧠 Attended tech stack orientation</span>
+                <span class="ms-2 badge bg-success">Score: 8/10</span>
+              </li>
+              <li class="d-flex align-items-center mb-2">
+                <input type="checkbox" class="task-checkbox" data-task-id="m2-2">
+                <span data-bs-toggle="tooltip" data-bs-placement="top" title="Read the coding standards guide in Resources">📘 Reviewed coding standards and documentation</span>
+                <span class="ms-2 badge bg-warning">Pending</span>
+              </li>
+              <li class="d-flex align-items-center mb-2">
+                <input type="checkbox" class="task-checkbox" data-task-id="m2-3">
+                <span data-bs-toggle="tooltip" data-bs-placement="top" title="Upload signed form by Day 20">📥 Upload your signed training completion form</span>
+                <span class="ms-2 badge bg-danger">Due Soon</span>
+              </li>
+            </ul>
+            <p><strong>Task Completion:</strong> <span id="task-completion">1/3 (33%)</span></p>
+            <p><strong>Comment:</strong> Good progress, Alex! Focus on reviewing coding standards and uploading your training form by Day 20.</p>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Month 3-4 -->
+      <div class="timeline-item">
+        <div class="card p-3 collapsed">
+          <div class="timeline-date" data-bs-toggle="collapse" data-bs-target="#month34">
+            <i class="fas fa-chevron-down toggle-icon collapsed"></i> Months 3-4 - Integration
+          </div>
+          <div class="card-body collapse" id="month34">
+            <h5>Team Collaboration & Culture</h5>
+            <p>Participate in team projects, understand our engineering culture, and establish your network.</p>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Month 5-7 -->
+      <div class="timeline-item">
+        <div class="card p-3 collapsed">
+          <div class="timeline-date" data-bs-toggle="collapse" data-bs-target="#month57">
+            <i class="fas fa-chevron-down toggle-icon collapsed"></i> Months 5-7 - Performance
+          </div>
+          <div class="card-body collapse" id="month57">
+            <h5>Independent Contributions</h5>
+            <p>Take ownership of features, participate in code reviews, and establish your technical expertise.</p>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Month 8-10 -->
+      <div class="timeline-item">
+        <div class="card p-3 collapsed">
+          <div class="timeline-date" data-bs-toggle="collapse" data-bs-target="#month810">
+            <i class="fas fa-chevron-down toggle-icon collapsed"></i> Months 8-10 - Growth
+          </div>
+          <div class="card-body collapse" id="month810">
+            <h5>Mentorship & Leadership</h5>
+            <p>Begin mentoring others, contribute to architectural decisions, and develop leadership skills.</p>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Month 12 -->
+      <div class="timeline-item">
+        <div class="card p-3 collapsed">
+          <div class="timeline-date" data-bs-toggle="collapse" data-bs-target="#month12">
+            <i class="fas fa-chevron-down toggle-icon collapsed"></i> Month 12 - Review
+          </div>
+          <div class="card-body collapse" id="month12">
+            <h5>Career Development</h5>
+            <p>Evaluate your first year, plan your career path, and set goals for the coming year.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Assistant Floating Button -->
+  <div class="ai-assistant" id="aiAssistantBtn">
+    <i class="fas fa-robot"></i>
+  </div>
+
+  <!-- AI Assistant Modal -->
+  <div class="ai-modal" id="aiModal">
+    <h5>Onboarding Assistant</h5>
+    <div class="ai-message">
+      Hi Alex! You're on Day 13 of Month 2. Let's keep up the momentum in your training phase!
+    </div>
+    <div class="ai-options">
+      <div class="ai-option">What's left to do in Month 2?</div>
+      <div class="ai-option">Where can I find coding standards?</div>
+      <div class="ai-option">Connect me with a trainer</div>
+      <div class="ai-option">Review Month 1 assignments</div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Bootstrap Tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+    // AI Assistant Toggle
+    const aiBtn = document.getElementById('aiAssistantBtn');
+    const aiModal = document.getElementById('aiModal');
+    
+    aiBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      aiModal.style.display = aiModal.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // Close modal when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!aiModal.contains(e.target) && e.target !== aiBtn) {
+        aiModal.style.display = 'none';
+      }
+    });
+
+    // AI option selection
+    document.querySelectorAll('.ai-option').forEach(option => {
+      option.addEventListener('click', () => {
+        const question = option.textContent;
+        let response = "";
+        
+        if (question.includes("Month 2")) {
+          response = "In Month 2, complete these tasks:\n- Review coding standards in the Resources section\n- Upload your signed training completion form by Day 20";
+        } else if (question.includes("coding standards")) {
+          response = "The coding standards guide is available in the Resources section. Focus on the sections about React best practices and code review processes.";
+        } else if (question.includes("trainer")) {
+          response = "Let's connect you with Kavindi Mihiranga, our training lead. She's available tomorrow at 2 PM. Would you like me to schedule a session?";
+        } else if (question.includes("Month 1 assignments")) {
+          response = "Month 1 assignments were completed with scores:\n- Onboarding Documents: 9/10 (Missed optional form)\n- Workspace Setup: 8/10 (Minor delay)\n- Team Introductions: 10/10 (Exceeded expectations)\nCheck the timeline for detailed feedback.";
+        }
+        
+        alert("Assistant says:\n\n" + response);
+        aiModal.style.display = 'none';
+      });
+    });
+
+    // Task Checkbox Handling
+    const checkboxes = document.querySelectorAll('.task-checkbox:not(:disabled)');
+    const taskCompletion = document.getElementById('task-completion');
+    const totalTasks = checkboxes.length + document.querySelectorAll('.task-checkbox:disabled').length;
+
+    function updateTaskCompletion() {
+      const completedTasks = document.querySelectorAll('.task-checkbox:checked').length;
+      const percentage = Math.round((completedTasks / totalTasks) * 100);
+      taskCompletion.textContent = `${completedTasks}/${totalTasks} (${percentage}%)`;
+      
+      checkboxes.forEach(checkbox => {
+        const taskText = checkbox.nextElementSibling;
+        if (checkbox.checked) {
+          taskText.classList.add('task-completed');
+        } else {
+          taskText.classList.remove('task-completed');
+        }
+      });
+    }
+
+    checkboxes.forEach(checkbox => {
+      const taskId = checkbox.dataset.taskId;
+      const savedState = localStorage.getItem(`task-${taskId}`);
+      if (savedState === 'checked') {
+        checkbox.checked = true;
+      }
+
+      checkbox.addEventListener('change', () => {
+        localStorage.setItem(`task-${taskId}`, checkbox.checked ? 'checked' : 'unchecked');
+        updateTaskCompletion();
+      });
+    });
+
+    updateTaskCompletion();
+
+    // Toggle Card Collapse
+    document.querySelectorAll('.timeline-date').forEach(date => {
+      date.addEventListener('click', () => {
+        const targetId = date.dataset.bsTarget;
+        const card = document.querySelector(targetId).parentElement;
+        const icon = date.querySelector('.toggle-icon');
+        card.classList.toggle('collapsed');
+        icon.classList.toggle('collapsed');
+      });
+    });
+
+    // Toggle Assignment Details
+    document.querySelectorAll('.assignment-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const targetId = header.dataset.bsTarget;
+        const details = document.querySelector(targetId);
+        details.classList.toggle('show');
+        const icon = header.querySelector('i');
+        icon.classList.toggle('fa-chevron-down');
+        icon.classList.toggle('fa-chevron-up');
+      });
+    });
+  </script>
+</body>
+</html>
