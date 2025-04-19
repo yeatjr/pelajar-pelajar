@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bit.Buddy Profile Page</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --primary-green: #96F027;
+      --primary-blue: #007CF7;
+      --light-gray: #f5f5f5;
+      --text-dark: #111;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background-color: var(--light-gray);
+      overflow-x: hidden;
+    }
+
+    body {
+      display: flex;
+    }
+
+    .sidebar {
+      width: 200px;
+      background-color: var(--primary-green);
+      min-height: 100vh;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: fixed;
+      height: 100%;
+    }
+
+    .pixel-logo {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1rem;
+      margin-bottom: 30px;
+      color: var(--text-dark);
+      line-height: 1.4;
+    }
+
+    .sidebar nav ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar nav li {
+      margin-bottom: 15px;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar nav li:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+      transform: translateX(5px);
+    }
+
+    .sidebar nav li.active {
+      background-color: rgba(0, 0, 0, 0.08);
+      font-weight: bold;
+    }
+
+    .sidebar nav li i {
+      width: 20px;
+      color: #111;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .user-profile:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .profile-icon {
+      width: 36px;
+      height: 36px;
+      background-color: var(--primary-blue);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .user-info {
+      margin-left: 10px;
+    }
+
+    .user-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .user-role {
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 40px;
+      background: white;
+      overflow-y: auto;
+      margin-left: 200px;
+    }
+
+    .profile-section, .experience-table {
+      margin-bottom: 30px;
+    }
+
+    .profile-card, .interview-card, .status-card {
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+    }
+
+    .circle-chart {
+      height: 150px;
+    }
+
+    .experience-table table {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .chatbox {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+    }
+
+    .chatbox-icon {
+      width: 50px;
+      height: 50px;
+      background-color: var(--primary-blue);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .chatbox-body {
+      display: none;
+      flex-direction: column;
+      background-color: white;
+      width: 300px;
+      max-height: 400px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      position: absolute;
+      bottom: 60px;
+      right: 0;
+    }
+
+    .chatbox.show .chatbox-body {
+      display: flex;
+    }
+
+    .chatbox-header {
+      background-color: var(--primary-blue);
+      color: white;
+      padding: 10px;
+      font-weight: bold;
+    }
+
+    .chatbox-messages {
+      padding: 10px;
+      height: 200px;
+      overflow-y: auto;
+    }
+
+    .chatbox-input {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+
+    .chatbox-input input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+    }
+
+    .chatbox-input button {
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      padding: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 60px;
+        overflow: hidden;
+      }
+      .sidebar nav li span {
+        display: none;
+      }
+      .pixel-logo {
+        font-size: 0.7rem;
+      }
+      .main-content {
+        margin-left: 60px;
+      }
+      
+    }
+    .sidebar nav li a {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.sidebar nav li a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div>
+      <h1 class="pixel-logo">Bit.Buddy</h1>
+      <nav>
+        <ul>
+          <li>
+            <a href="homepage(newhires).html">
+              <i class="fas fa-home"></i> <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="timeline(newhires).html">
+              <i class="fas fa-clock"></i> <span>Timeline</span>
+            </a>
+          </li>
+          <li>
+            <a href="document(newhires).html">
+              <i class="fas fa-file-alt"></i> <span>Documents</span>
+            </a>
+          </li>
+          <li>
+            <a href="resources(newhires).html">
+              <i class="fas fa-book"></i> <span>Resources</span>
+            </a>
+          </li>
+          <li>
+            <a href="team(newhires).html">
+              <i class="fas fa-users"></i> <span>Team</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div class="user-profile">
+      <div class="profile-icon">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="user-info">
+        <div class="user-name">Alex Chen</div>
+        <div class="user-role">New Hire Mode</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <h2>Candidate Profile</h2>
+    <div class="row g-4 profile-section">
+      <div class="col-md-4">
+        <div class="profile-card text-center">
+          <img src="https://randomuser.me/api/portraits/men/46.jpg" class="rounded-circle mb-2" alt="Alex Chen">
+          <h5 class="fw-bold">Alex Chen</h5>
+          <p class="text-muted">UI/UX Designer</p>
+          <p><strong>Currently Working:</strong><br> Cure Delivery Technologies</p>
+          <p><strong>Experience:</strong> 7 Years</p>
+          <p><strong>Education:</strong> Stark University - MBA</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="interview-card">
+          <h6 class="fw-bold">Interview Schedule</h6>
+          <ul class="list-unstyled">
+            <li>✔ Resume Review - <small>13 Mar 2023</small></li>
+            <li>✔ Technical Task - <small>15 Mar 2023</small></li>
+            <li>✔ Technical Interview - <small>18 Mar 2023</small></li>
+            <li>⏳ HR Interview - <small>22 Mar 2023</small></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="status-card text-center">
+          <h6 class="fw-bold">Profile Status</h6>
+          <canvas id="radarChart" class="circle-chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <h5>Previous Experience</h5>
+    <div class="experience-table">
+      <table class="table">
+        <thead class="table-light">
+          <tr>
+            <th>Company</th>
+            <th>Designation</th>
+            <th>Experience</th>
+            <th>Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>HealthP Technologies</td><td>UI/UX Designer</td><td>2 Years</td><td>Calicut</td></tr>
+          <tr><td>2Base Technologies</td><td>UI/UX Designer</td><td>1 Year</td><td>Kochi</td></tr>
+          <tr><td>Zenerom Technologies</td><td>UI/UX Designer</td><td>2 Years</td><td>Kochi</td></tr>
+          <tr><td>HealthP Technologies</td><td>UI/UX Designer</td><td>2 Years</td><td>Calicut</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="chatbox" id="chatbox">
+    <div class="chatbox-icon" onclick="toggleChat()">
+      <i class="fas fa-comments"></i>
+    </div>
+    <div class="chatbox-body" id="chatboxBody">
+      <div class="chatbox-header">AI Assistant</div>
+      <div class="chatbox-messages" id="chatMessages">
+        <div><strong>AI:</strong> Need help with choosing who to talk to for a sponsorship task?</div>
+      </div>
+      <div class="chatbox-input">
+        <input type="text" id="chatInput" placeholder="Ask something...">
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('radarChart');
+    new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: ['Efficiency', 'Communication', 'Skilled', 'Teamwork', 'Adaptability'],
+        datasets: [{
+          label: 'Abilities',
+          data: [85, 70, 90, 75, 80],
+          backgroundColor: 'rgba(0, 124, 247, 0.2)',
+          borderColor: '#007CF7',
+          pointBackgroundColor: '#007CF7'
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          r: {
+            angleLines: { display: false },
+            suggestedMin: 0,
+            suggestedMax: 100
+          }
+        }
+      }
+    });
+
+    function toggleChat() {
+      document.getElementById("chatbox").classList.toggle("show");
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      if (!message) return;
+      const chatMessages = document.getElementById('chatMessages');
+      const userMsg = document.createElement('div');
+      userMsg.innerHTML = `<strong>You:</strong> ${message}`;
+      chatMessages.appendChild(userMsg);
+      const aiResponse = document.createElement('div');
+      aiResponse.innerHTML = `<strong>AI:</strong> Let me find the best person for that.`;
+      chatMessages.appendChild(aiResponse);
+      input.value = '';
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+  </script>
+</body>
+</html>

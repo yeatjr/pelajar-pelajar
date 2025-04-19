@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bit.Buddy Portal - Manager Mode</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-green: #96F027;
+      --primary-blue: #007CF7;
+      --light-gray: #f5f5f5;
+      --text-dark: #111;
+      --accent-orange: #FF6B35;
+      --accent-purple: #6E44FF;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-gray);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 200px;
+      background-color: var(--primary-green);
+      min-height: 100vh;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: fixed;
+    }
+
+    .pixel-logo {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1rem;
+      margin-bottom: 30px;
+      color: var(--text-dark);
+      line-height: 1.4;
+    }
+
+    .sidebar nav ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar nav li {
+      margin-bottom: 15px;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar nav li:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+      transform: translateX(5px);
+    }
+
+    .sidebar nav li.active {
+      background-color: rgba(0, 0, 0, 0.08);
+      font-weight: bold;
+    }
+
+    .sidebar nav li i {
+      width: 20px;
+      color: #111;
+    }
+
+    .divider {
+      height: 1px;
+      background-color: rgba(0, 0, 0, 0.1);
+      margin: 20px 0;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .user-profile:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .profile-icon {
+      width: 36px;
+      height: 36px;
+      background-color: var(--primary-blue);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .user-info {
+      margin-left: 10px;
+    }
+
+    .user-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .user-role {
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 40px;
+      margin-left: 220px;
+      background: white;
+    }
+
+    /* Table Styles */
+    .table thead {
+      background-color: #e9ecef;
+    }
+
+    .table-hover tbody tr:hover {
+      background-color: #f8f9fa;
+      cursor: pointer;
+    }
+
+    .status-badge {
+      padding: 0.3rem 0.6rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+    }
+
+    .badge-ongoing {
+      background-color: #17a2b8;
+      color: white;
+    }
+
+    .badge-completed {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .badge-new {
+      background-color: var(--accent-orange);
+      color: white;
+    }
+
+    /* Department Cards */
+    .department-card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      height: 100%;
+    }
+
+    .department-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+    }
+
+    .icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+      font-size: 20px;
+    }
+
+    .bg-engineering {
+      background-color: var(--primary-blue);
+      color: white;
+    }
+
+    .bg-design {
+      background-color: #6f42c1;
+      color: white;
+    }
+
+    .bg-marketing {
+      background-color: #fd7e14;
+      color: white;
+    }
+
+    /* AI Assistant */
+    .ai-assistant {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: var(--primary-blue);
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 124, 247, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+
+    .ai-assistant:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(0, 124, 247, 0.4);
+    }
+
+    .ai-assistant i {
+      font-size: 1.5rem;
+    }
+
+    /* AI Modal */
+    .ai-modal {
+      display: none;
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      width: 300px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      z-index: 101;
+      padding: 20px;
+    }
+
+    .ai-modal h5 {
+      color: var(--primary-blue);
+      margin-bottom: 15px;
+    }
+
+    .ai-message {
+      background-color: var(--light-gray);
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+    }
+
+    .ai-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ai-option {
+      padding: 8px 12px;
+      background-color: #f8f9fa;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.85rem;
+    }
+
+    .ai-option:hover {
+      background-color: #e9ecef;
+    }
+
+    /* Progress Bars */
+    .progress-thin {
+      height: 6px;
+    }
+
+    /* Status Indicators */
+    .status-dot {
+      height: 10px;
+      width: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 5px;
+    }
+
+    .online { background-color: #28a745; }
+    .offline { background-color: #dc3545; }
+    .away { background-color: #ffc107; }
+
+    /* Tooltips */
+    .tooltip-icon {
+      cursor: help;
+      margin-left: 5px;
+      color: #6c757d;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 60px;
+        overflow: hidden;
+      }
+      .sidebar nav li span {
+        display: none;
+      }
+      .pixel-logo {
+        font-size: 0.7rem;
+      }
+      .main-content {
+        margin-left: 60px;
+        padding: 20px;
+      }
+    }
+
+    .sidebar nav li a {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.sidebar nav li a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+  </style>
+</head>
+<body>
+  <!-- Navigation Sidebar -->
+  <div class="sidebar">
+    <div>
+      <h1 class="pixel-logo">Bit.Buddy</h1>
+      <nav>
+        <ul>
+          <li >
+            <a href="homepage(manager).html">
+              <i class="fas fa-home"></i> <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="timeline(manager).html">
+              <i class="fas fa-clock"></i> <span>Timeline</span>
+            </a>
+          </li>
+          <li>
+            <a href="document(manager).html">
+              <i class="fas fa-file-alt"></i> <span>Documents</span>
+            </a>
+          </li>
+          <li>
+            <a href="resources(manager).html">
+              <i class="fas fa-book"></i> <span>Resources</span>
+            </a>
+          </li>
+          <li class="active">
+            <a href="team(manager).html">
+              <i class="fas fa-users"></i> <span>Team</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    
+    <div class="user-profile">
+      <div class="profile-icon">
+        <i class="fas fa-user-tie"></i>
+      </div>
+      <div class="user-info">
+        <div class="user-name">Sarah Johnson</div>
+        <div class="user-role">Manager Mode</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h4>New Hires Directory</h4>
+        <p class="text-muted mb-0">Manage and track all new hires in your department</p>
+      </div>
+      <div>
+        <button class="btn btn-sm btn-outline-primary me-2" id="exportBtn">
+          <i class="fas fa-download me-1"></i> Export
+        </button>
+        <button class="btn btn-sm btn-primary" id="addHireBtn">
+          <i class="fas fa-plus me-1"></i> Add New Hire
+        </button>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search by name, department, or skills...">
+      </div>
+      <div class="col-md-3">
+        <select id="deptFilter" class="form-select">
+          <option value="">All Departments</option>
+          <option value="Engineering">Engineering</option>
+          <option value="Design">Design</option>
+          <option value="Marketing">Marketing</option>
+          <option value="HR">Human Resources</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select id="statusFilter" class="form-select">
+          <option value="">All Statuses</option>
+          <option value="Onboarding">Onboarding</option>
+          <option value="Active">Active</option>
+          <option value="At Risk">At Risk</option>
+          <option value="Completed">Completed</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Name <i class="fas fa-sort tooltip-icon" title="Sort by name"></i></th>
+            <th>Department <i class="fas fa-sort tooltip-icon" title="Sort by department"></i></th>
+            <th>Role</th>
+            <th>Onboarding Progress</th>
+            <th>Status</th>
+            <th>Last Check-in</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr onclick="window.location='profile-john.html';" style="cursor:pointer;">
+            <td>
+              <div class="d-flex align-items-center">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" class="rounded-circle me-2" width="32" height="32">
+                <div>
+                  <div>John Doe</div>
+                  <small class="text-muted">john.doe@example.com</small>
+                </div>
+              </div>
+            </td>
+            <td>Engineering</td>
+            <td>Frontend Developer</td>
+            <td>
+              <div class="progress progress-thin">
+                <div class="progress-bar bg-success" style="width: 75%"></div>
+              </div>
+              <small>75% complete</small>
+            </td>
+            <td><span class="status-badge badge-ongoing">On Track</span></td>
+            <td>
+              <span class="status-dot online"></span>
+              Today, 10:30 AM
+            </td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary me-1" onclick="event.stopPropagation();">
+                <i class="fas fa-comment"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation();">
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+            </td>
+          </tr>
+          <tr onclick="window.location='profile-zara.html';" style="cursor:pointer;">
+            <td>
+              <div class="d-flex align-items-center">
+                <img src="https://randomuser.me/api/portraits/women/44.jpg" class="rounded-circle me-2" width="32" height="32">
+                <div>
+                  <div>Zara John</div>
+                  <small class="text-muted">zara.john@example.com</small>
+                </div>
+              </div>
+            </td>
+            <td>Engineering</td>
+            <td>iOS Developer</td>
+            <td>
+              <div class="progress progress-thin">
+                <div class="progress-bar bg-warning" style="width: 45%"></div>
+              </div>
+              <small>45% complete</small>
+            </td>
+            <td><span class="status-badge badge-new">Needs Attention</span></td>
+            <td>
+              <span class="status-dot away"></span>
+              Yesterday, 3:15 PM
+            </td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary me-1" onclick="event.stopPropagation();">
+                <i class="fas fa-comment"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation();">
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+            </td>
+          </tr>
+          <tr onclick="window.location='profile-jamie.html';" style="cursor:pointer;">
+            <td>
+              <div class="d-flex align-items-center">
+                <img src="https://randomuser.me/api/portraits/women/68.jpg" class="rounded-circle me-2" width="32" height="32">
+                <div>
+                  <div>Jamie Lee</div>
+                  <small class="text-muted">jamie.lee@example.com</small>
+                </div>
+              </div>
+            </td>
+            <td>Design</td>
+            <td>UI/UX Designer</td>
+            <td>
+              <div class="progress progress-thin">
+                <div class="progress-bar bg-success" style="width: 90%"></div>
+              </div>
+              <small>90% complete</small>
+            </td>
+            <td><span class="status-badge badge-completed">Almost Done</span></td>
+            <td>
+              <span class="status-dot online"></span>
+              Today, 9:45 AM
+            </td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary me-1" onclick="event.stopPropagation();">
+                <i class="fas fa-comment"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation();">
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+            </td>
+          </tr>
+          <tr onclick="window.location='profile-priya.html';" style="cursor:pointer;">
+            <td>
+              <div class="d-flex align-items-center">
+                <img src="https://randomuser.me/api/portraits/women/33.jpg" class="rounded-circle me-2" width="32" height="32">
+                <div>
+                  <div>Priya Patel</div>
+                  <small class="text-muted">priya.patel@example.com</small>
+                </div>
+              </div>
+            </td>
+            <td>Marketing</td>
+            <td>Marketing Associate</td>
+            <td>
+              <div class="progress progress-thin">
+                <div class="progress-bar bg-info" style="width: 60%"></div>
+              </div>
+              <small>60% complete</small>
+            </td>
+            <td><span class="status-badge badge-ongoing">On Track</span></td>
+            <td>
+              <span class="status-dot online"></span>
+              Today, 11:20 AM
+            </td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary me-1" onclick="event.stopPropagation();">
+                <i class="fas fa-comment"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation();">
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <div>
+        <small class="text-muted">Showing 1 to 4 of 4 entries</small>
+      </div>
+      <nav>
+        <ul class="pagination pagination-sm">
+          <li class="page-item disabled">
+            <a class="page-link" href="#">Previous</a>
+          </li>
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="section-divider mt-4 mb-4"></div>
+
+    <h4 class="mb-4">Department Connections</h4>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card department-card p-3">
+          <div class="d-flex align-items-center mb-3">
+            <div class="icon-box bg-engineering">
+              <i class="fas fa-code"></i>
+            </div>
+            <h5 class="mb-0">Engineering</h5>
+          </div>
+          <p class="mb-3">Your core development team including frontend, backend, QA, and DevOps engineers.</p>
+          
+          <div class="mb-3">
+            <h6 class="mb-2">Key Contacts:</h6>
+            <div class="d-flex align-items-center mb-2">
+              <img src="https://randomuser.me/api/portraits/women/65.jpg" class="rounded-circle me-2" width="32" height="32">
+              <div>
+                <div class="fw-bold">Sarah Johnson</div>
+                <small class="text-muted">Team Lead</small>
+              </div>
+              <span class="status-dot online ms-auto"></span>
+            </div>
+            <div class="d-flex align-items-center">
+              <img src="https://randomuser.me/api/portraits/men/22.jpg" class="rounded-circle me-2" width="32" height="32">
+              <div>
+                <div class="fw-bold">Michael Chen</div>
+                <small class="text-muted">Senior Mentor</small>
+              </div>
+              <span class="status-dot away ms-auto"></span>
+            </div>
+          </div>
+          
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-primary flex-grow-1">
+              <i class="fas fa-calendar me-1"></i> Schedule
+            </button>
+            <button class="btn btn-sm btn-outline-secondary flex-grow-1">
+              <i class="fas fa-robot me-1"></i> Ask AI
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="card department-card p-3">
+          <div class="d-flex align-items-center mb-3">
+            <div class="icon-box bg-design">
+              <i class="fas fa-pen-nib"></i>
+            </div>
+            <h5 class="mb-0">Design</h5>
+          </div>
+          <p class="mb-3">Handles all UI/UX design, product visuals, user flows, and prototyping.</p>
+          
+          <div class="mb-3">
+            <h6 class="mb-2">Key Contacts:</h6>
+            <div class="d-flex align-items-center">
+              <img src="https://randomuser.me/api/portraits/women/68.jpg" class="rounded-circle me-2" width="32" height="32">
+              <div>
+                <div class="fw-bold">Jamie Lee</div>
+                <small class="text-muted">Lead Designer</small>
+              </div>
+              <span class="status-dot online ms-auto"></span>
+            </div>
+          </div>
+          
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-primary flex-grow-1">
+              <i class="fas fa-calendar me-1"></i> Schedule
+            </button>
+            <button class="btn btn-sm btn-outline-secondary flex-grow-1">
+              <i class="fas fa-robot me-1"></i> Ask AI
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="card department-card p-3">
+          <div class="d-flex align-items-center mb-3">
+            <div class="icon-box bg-marketing">
+              <i class="fas fa-bullhorn"></i>
+            </div>
+            <h5 class="mb-0">Marketing</h5>
+          </div>
+          <p class="mb-3">Focuses on brand strategy, marketing campaigns, social media, and outreach.</p>
+          
+          <div class="mb-3">
+            <h6 class="mb-2">Key Contacts:</h6>
+            <div class="d-flex align-items-center">
+              <img src="https://randomuser.me/api/portraits/women/33.jpg" class="rounded-circle me-2" width="32" height="32">
+              <div>
+                <div class="fw-bold">Priya Patel</div>
+                <small class="text-muted">Marketing Lead</small>
+              </div>
+              <span class="status-dot offline ms-auto"></span>
+            </div>
+          </div>
+          
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-primary flex-grow-1">
+              <i class="fas fa-calendar me-1"></i> Schedule
+            </button>
+            <button class="btn btn-sm btn-outline-secondary flex-grow-1">
+              <i class="fas fa-robot me-1"></i> Ask AI
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Assistant Floating Button -->
+  <div class="ai-assistant pulse" id="aiAssistantBtn">
+    <i class="fas fa-robot"></i>
+  </div>
+
+  <!-- AI Assistant Modal -->
+  <div class="ai-modal" id="aiModal">
+    <h5>Manager Assistant</h5>
+    <div class="ai-message">
+      Hi Sarah! I can help you manage new hires, analyze onboarding progress, or connect with teams.
+    </div>
+    <div class="ai-options">
+      <div class="ai-option">Show onboarding progress report</div>
+      <div class="ai-option">Identify at-risk new hires</div>
+      <div class="ai-option">Generate 1:1 meeting agenda</div>
+      <div class="ai-option">Suggest mentor assignments</div>
+    </div>
+  </div>
+
+  <!-- Add New Hire Modal -->
+  <div class="modal fade" id="addHireModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add New Hire</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="newHireForm">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">First Name</label>
+                <input type="text" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Last Name</label>
+                <input type="text" class="form-control" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" required>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Department</label>
+                <select class="form-select" required>
+                  <option value="">Select department</option>
+                  <option value="Engineering">Engineering</option>
+                  <option value="Design">Design</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="HR">Human Resources</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Role</label>
+                <input type="text" class="form-control" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Start Date</label>
+              <input type="date" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Assign Mentor</label>
+              <select class="form-select">
+                <option value="">Select mentor</option>
+                <option value="1">Michael Chen</option>
+                <option value="2">Jamie Lee</option>
+                <option value="3">Priya Patel</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" form="newHireForm" class="btn btn-primary">Add New Hire</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Initialize Bootstrap modals
+    const addHireModal = new bootstrap.Modal(document.getElementById('addHireModal'));
+    
+    // Add New Hire button
+    document.getElementById('addHireBtn').addEventListener('click', () => {
+      addHireModal.show();
+    });
+    
+    // Form submission for new hire
+    document.getElementById('newHireForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('New hire added successfully!');
+      addHireModal.hide();
+      // In a real app, you would add the new hire to the table
+    });
+    
+    // AI Assistant Toggle
+    const aiBtn = document.getElementById('aiAssistantBtn');
+    const aiModal = document.getElementById('aiModal');
+    
+    aiBtn.addEventListener('click', () => {
+      aiModal.style.display = aiModal.style.display === 'block' ? 'none' : 'block';
+    });
+    
+    // Close AI modal when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!aiModal.contains(e.target) && e.target !== aiBtn) {
+        aiModal.style.display = 'none';
+      }
+    });
+    
+    // AI option selection
+    document.querySelectorAll('.ai-option').forEach(option => {
+      option.addEventListener('click', () => {
+        alert("Here's what I found:\n\n1. John Doe - On track (75%)\n2. Zara John - Needs attention (45%)\n3. Jamie Lee - Almost done (90%)\n4. Priya Patel - On track (60%)");
+        aiModal.style.display = 'none';
+      });
+    });
+    
+    // Table filtering
+    const searchInput = document.getElementById('searchInput');
+    const deptFilter = document.getElementById('deptFilter');
+    const statusFilter = document.getElementById('statusFilter');
+    const tableRows = document.querySelectorAll('tbody tr');
+    
+    function filterTable() {
+      const searchValue = searchInput.value.toLowerCase();
+      const deptValue = deptFilter.value;
+      const statusValue = statusFilter.value;
+      
+      tableRows.forEach(row => {
+        const name = row.cells[0].textContent.toLowerCase();
+        const dept = row.cells[1].textContent;
+        const status = row.cells[4].textContent;
+        
+        const matchesSearch = name.includes(searchValue);
+        const matchesDept = deptValue === '' || dept === deptValue;
+        const matchesStatus = statusValue === '' || status.includes(statusValue);
+        
+        row.style.display = (matchesSearch && matchesDept && matchesStatus) ? '' : 'none';
+      });
+    }
+    
+    searchInput.addEventListener('input', filterTable);
+    deptFilter.addEventListener('change', filterTable);
+    statusFilter.addEventListener('change', filterTable);
+    
+    // Export button
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      alert('Exporting new hires data to CSV...');
+    });
+  </script>
+</body>
+</html>

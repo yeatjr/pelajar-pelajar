@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bit.Buddy Home</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-green: #96F027;
+      --primary-blue: #007CF7;
+      --text-dark: #111;
+      --transition-speed: 0.2s;
+      --background-light: #ffffff;
+      --gray: #f5f5f5;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      min-height: 100vh;
+      background-color: var(--gray);
+      color: var(--text-dark);
+    }
+
+    .sidebar {
+      width: 220px;
+      background-color: var(--primary-green);
+      min-height: 100vh;
+      padding: 30px 20px;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: fixed;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .pixel-logo {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1rem;
+      margin-bottom: 30px;
+      color: var(--text-dark);
+      line-height: 1.4;
+    }
+
+    .sidebar nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar nav li {
+      margin-bottom: 12px;
+      cursor: pointer;
+      padding: 12px 15px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all var(--transition-speed) ease;
+      font-weight: 500;
+    }
+
+    .sidebar nav li:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+      transform: translateX(5px);
+    }
+
+    .sidebar nav li i {
+      width: 20px;
+      color: var(--text-dark);
+      font-size: 0.9rem;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all var(--transition-speed) ease;
+      margin-top: 20px;
+    }
+
+    .user-profile:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .profile-icon {
+      width: 38px;
+      height: 38px;
+      background-color: var(--primary-blue);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .user-info {
+      margin-left: 12px;
+    }
+
+    .user-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .main-content {
+      margin-left: 220px;
+      padding: 50px;
+      background-color: var(--background-light);
+      flex: 1;
+      min-height: 100vh;
+    }
+
+    h1 {
+      color: var(--primary-blue);
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.2rem;
+      font-weight: 600;
+    }
+
+    .form-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: calc(100vh - 100px);
+    }
+
+    .form-box {
+      background: #fff;
+      width: 100%;
+      max-width: 500px;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .form-box label {
+      display: block;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #444;
+      font-size: 0.95rem;
+    }
+
+    .form-box select {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 1rem;
+      background-color: #fff;
+      transition: all var(--transition-speed) ease;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 1em;
+    }
+
+    .form-box select:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 3px rgba(0, 124, 247, 0.2);
+    }
+
+    .form-box button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 30px;
+      border-radius: 6px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      background-color: var(--primary-blue);
+      color: white;
+      cursor: pointer;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .form-box button:hover {
+      background-color: #0066cc;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-page {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-container {
+      background-color: white;
+      padding: 40px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-container h2 {
+      margin-bottom: 15px;
+      color: var(--text-dark);
+      font-weight: 600;
+    }
+
+    .login-container p {
+      color: #666;
+      margin-bottom: 25px;
+    }
+
+    .google-login-btn {
+      background-color: #fff;
+      color: #444;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      width: 100%;
+      max-width: 300px;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .google-login-btn:hover {
+      background-color: #f7f7f7;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .google-logo {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+    }
+
+    .login-container small {
+      display: block;
+      margin-top: 25px;
+      color: #999;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 60px;
+        padding: 20px 10px;
+      }
+      
+      .sidebar nav li span {
+        display: none;
+      }
+      
+      .sidebar nav li i {
+        margin-right: 0;
+        font-size: 1.1rem;
+      }
+      
+      .pixel-logo {
+        font-size: 0.7rem;
+        margin-bottom: 20px;
+      }
+      
+      .user-name {
+        display: none;
+      }
+      
+      .profile-icon {
+        margin: 0 auto;
+      }
+      
+      .main-content {
+        margin-left: 60px;
+        padding: 20px;
+      }
+      
+      .form-box {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div>
+      <h1 class="pixel-logo">Bit.Buddy</h1>
+      <nav>
+        <ul>
+          <li><i class="fas fa-home"></i> <span>Dashboard</span></li>
+          <li><i class="fas fa-clock"></i> <span>Timeline</span></li>
+          <li><i class="fas fa-file-alt"></i> <span>Documents</span></li>
+          <li><i class="fas fa-book"></i> <span>Resources</span></li>
+          <li><i class="fas fa-users"></i> <span>Team</span></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="user-profile" id="profileBtn">
+      <div class="profile-icon">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="user-info">
+        <div class="user-name">Sign In</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="form-container">
+      <div class="form-box">
+        <h1>Start Onboarding</h1>
+        <form onsubmit="return redirectToRolePage()">
+          <label for="role">Who are you?</label>
+          <select name="role" id="role" required>
+            <option value="">Select your role...</option>
+            <option value="manager">Manager</option>
+            <option value="newhire">New Hire</option>
+          </select>
+
+          <label for="department">Which department?</label>
+          <select name="department" id="department" required>
+            <option value="">Select department...</option>
+            <option value="engineering">Engineering</option>
+            <option value="design">Design</option>
+            <option value="hr">Human Resources</option>
+            <option value="marketing">Marketing</option>
+            <option value="finance">Finance</option>
+          </select>
+
+          <button type="submit">Continue <i class="fas fa-arrow-right"></i></button>
+        </form>
+      </div>
+    </div>
+
+    <div class="login-page" id="loginPage">
+      <div class="login-container">
+        <h2>Login to Bit.Buddy</h2>
+        <p>Continue with your Google account</p>
+        <button class="google-login-btn" id="googleLoginBtn">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" class="google-logo" alt="Google logo"/>
+          Continue with Google
+        </button>
+        <small>By continuing, you agree to our Terms of Service</small>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function redirectToRolePage() {
+      const role = document.getElementById("role").value;
+      if (role === "manager") {
+        window.location.href = "homepage(manager).html";
+      } else if (role === "newhire") {
+        window.location.href = "homepage(newhires).html";
+      }
+      return false;
+    }
+
+    document.getElementById('profileBtn').addEventListener('click', function () {
+      document.getElementById('loginPage').style.display = 'flex';
+    });
+
+    document.getElementById('googleLoginBtn').addEventListener('click', function () {
+      window.location.href =
+        'https://accounts.google.com/o/oauth2/auth?' +
+        'client_id=YOUR_CLIENT_ID&' +
+        'redirect_uri=YOUR_REDIRECT_URI&' +
+        'response_type=code&' +
+        'scope=email profile&' +
+        'access_type=offline';
+    });
+
+    document.getElementById('loginPage').addEventListener('click', function (e) {
+      if (e.target === this) {
+        this.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

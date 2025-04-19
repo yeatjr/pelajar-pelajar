@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bit.Buddy | Colleague Directory</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-green: #96F027;
+      --primary-blue: #007CF7;
+      --light-gray: #f5f5f5;
+      --text-dark: #111;
+      --accent-orange: #FF6B35;
+      --accent-purple: #6E44FF;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-gray);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 200px;
+      background-color: var(--primary-green);
+      min-height: 100vh;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: fixed;
+      height: 100%;
+    }
+
+    .pixel-logo {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1rem;
+      margin-bottom: 30px;
+      color: var(--text-dark);
+      line-height: 1.4;
+    }
+
+    .sidebar nav ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar nav li {
+      margin-bottom: 15px;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar nav li:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+      transform: translateX(5px);
+    }
+
+    .sidebar nav li.active {
+      background-color: rgba(0, 0, 0, 0.08);
+      font-weight: bold;
+    }
+
+    .sidebar nav li i {
+      width: 20px;
+      color: #111;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 40px;
+      margin-left: 200px;
+      background: white;
+    }
+
+    /* Status Indicators */
+    .status-dot {
+      height: 10px;
+      width: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 5px;
+    }
+    .online { background-color: #2ecc71; }
+    .offline { background-color: #e74c3c; }
+    .away { background-color: #f39c12; }
+
+    /* Table Styling */
+    .table {
+      border-collapse: separate;
+      border-spacing: 0 10px;
+    }
+    
+    .table thead th {
+      border: none;
+      font-weight: 600;
+      color: #555;
+    }
+    
+    .table tbody tr {
+      background-color: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .table tbody tr:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .table td {
+      vertical-align: middle;
+      border-top: none;
+      border-bottom: none;
+      padding: 15px;
+      transition: all 0.2s ease;
+    }
+    
+    .table td:first-child {
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+    }
+    
+    .table td:last-child {
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      display: none;
+      gap: 5px;
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: white;
+      padding: 5px;
+      border-radius: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    tr:hover .quick-actions {
+      display: flex;
+    }
+    
+    .quick-action-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+    
+    .message-btn {
+      background-color: var(--primary-blue);
+    }
+    
+    .meet-btn {
+      background-color: var(--accent-orange);
+    }
+    
+    .profile-btn {
+      background-color: var(--accent-purple);
+    }
+
+    /* Filter Buttons */
+    .filter-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .filter-btn {
+      padding: 6px 12px;
+      border-radius: 20px;
+      background-color: white;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.85rem;
+    }
+    
+    .filter-btn.active {
+      background-color: var(--primary-blue);
+      color: white;
+      border-color: var(--primary-blue);
+    }
+    
+    .filter-btn:hover:not(.active) {
+      background-color: #f1f1f1;
+    }
+
+    /* Sort Buttons */
+    .sort-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px;
+      color: var(--text-dark);
+      transition: all 0.2s;
+    }
+    
+    .sort-btn:hover {
+      color: var(--primary-blue);
+    }
+    
+    .sort-btn.active {
+      color: var(--primary-blue);
+    }
+
+    /* AI Assistant */
+    .ai-assistant {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: var(--primary-blue);
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 124, 247, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+    
+    .ai-assistant:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(0, 124, 247, 0.4);
+    }
+    
+    .ai-assistant i {
+      font-size: 1.5rem;
+    }
+    
+    /* AI Modal */
+    .ai-modal {
+      display: none;
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      width: 300px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      z-index: 101;
+      padding: 20px;
+    }
+    
+    .ai-modal h5 {
+      color: var(--primary-blue);
+      margin-bottom: 15px;
+    }
+    
+    .ai-message {
+      background-color: var(--light-gray);
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+    }
+    
+    .ai-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .ai-option {
+      padding: 8px 12px;
+      background-color: #f8f9fa;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.85rem;
+    }
+    
+    .ai-option:hover {
+      background-color: #e9ecef;
+    }
+
+    /* User Profile */
+    .user-profile {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .user-profile:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    .profile-icon {
+      width: 36px;
+      height: 36px;
+      background-color: var(--primary-blue);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .user-info {
+      margin-left: 10px;
+    }
+    
+    .user-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .user-role {
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 60px;
+        overflow: hidden;
+      }
+      .sidebar nav li span {
+        display: none;
+      }
+      .pixel-logo {
+        font-size: 0.7rem;
+      }
+      .main-content {
+        margin-left: 60px;
+        padding: 20px;
+      }
+      .quick-actions {
+        position: static;
+        transform: none;
+        margin-top: 10px;
+        justify-content: center;
+        width: 100%;
+      }
+    }
+    .sidebar nav li a {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.sidebar nav li a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div>
+      <h1 class="pixel-logo">Bit.Buddy</h1>
+      <nav>
+        <ul>
+          <li>
+            <a href="homepage(newhires).html">
+              <i class="fas fa-home"></i> <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="timeline(newhires).html">
+              <i class="fas fa-clock"></i> <span>Timeline</span>
+            </a>
+          </li>
+          <li>
+            <a href="document(newhires).html">
+              <i class="fas fa-file-alt"></i> <span>Documents</span>
+            </a>
+          </li>
+          <li>
+            <a href="resources(newhires).html">
+              <i class="fas fa-book"></i> <span>Resources</span>
+            </a>
+          </li>
+          <li class="active">
+            <a href="team(newhires).html">
+              <i class="fas fa-users"></i> <span>Team</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div class="user-profile">
+      <div class="profile-icon">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="user-info">
+        <div class="user-name">Alex Chen</div>
+        <div class="user-role">New Hire Mode</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+    <h2>Colleague Directory</h2>
+        <p class="text-muted mb-0">Find and connect with team members across departments. Hover over a row to see actions.</p>
+      </div>
+      <div class="filter-container">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="online">Online</button>
+        <button class="filter-btn" data-filter="admin">Admins</button>
+        <button class="filter-btn" data-filter="member">Members</button>
+      </div>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>
+            Name 
+            <button class="sort-btn" data-sort="name">
+              <i class="fas fa-sort"></i>
+            </button>
+          </th>
+          <th>
+            Department
+            <button class="sort-btn" data-sort="dept">
+              <i class="fas fa-sort"></i>
+            </button>
+          </th>
+          <th>
+            Expertise
+            <button class="sort-btn" data-sort="expertise">
+              <i class="fas fa-sort"></i>
+            </button>
+          </th>
+          <th>
+            Role
+            <button class="sort-btn" data-sort="role">
+              <i class="fas fa-sort"></i>
+            </button>
+          </th>
+          <th>
+            Status
+            <button class="sort-btn" data-sort="status">
+              <i class="fas fa-sort"></i>
+            </button>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="me-3" style="width: 36px; height: 36px; background-color: #6E44FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">AH</div>
+              <div>Aliza Hurley</div>
+            </div>
+          </td>
+          <td>Engineering</td>
+          <td>Frontend, UI/UX</td>
+          <td><span class="badge bg-warning text-dark">Admin</span></td>
+          <td><span class="status-dot online"></span> Online</td>
+          <td>
+            <div class="quick-actions">
+              <button class="quick-action-btn message-btn" title="Message">
+                <i class="fas fa-comment"></i>
+              </button>
+              <button class="quick-action-btn meet-btn" title="Meet">
+                <i class="fas fa-video"></i>
+              </button>
+              <button class="quick-action-btn profile-btn" title="Profile">
+                <i class="fas fa-user"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="me-3" style="width: 36px; height: 36px; background-color: #FF6B35; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">AW</div>
+              <div>Amari Wiley</div>
+            </div>
+          </td>
+          <td>Product</td>
+          <td>Product Strategy</td>
+          <td><span class="badge bg-warning text-dark">Admin</span></td>
+          <td><span class="status-dot offline"></span> Offline</td>
+          <td>
+            <div class="quick-actions">
+              <button class="quick-action-btn message-btn" title="Message">
+                <i class="fas fa-comment"></i>
+              </button>
+              <button class="quick-action-btn meet-btn" title="Meet">
+                <i class="fas fa-video"></i>
+              </button>
+              <button class="quick-action-btn profile-btn" title="Profile">
+                <i class="fas fa-user"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="me-3" style="width: 36px; height: 36px; background-color: #007CF7; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">JA</div>
+              <div>Jane Atkins</div>
+            </div>
+          </td>
+          <td>HR</td>
+          <td>Recruiting, Onboarding</td>
+          <td><span class="badge bg-warning text-dark">Admin</span></td>
+          <td><span class="status-dot online"></span> Online</td>
+          <td>
+            <div class="quick-actions">
+              <button class="quick-action-btn message-btn" title="Message">
+                <i class="fas fa-comment"></i>
+              </button>
+              <button class="quick-action-btn meet-btn" title="Meet">
+                <i class="fas fa-video"></i>
+              </button>
+              <button class="quick-action-btn profile-btn" title="Profile">
+                <i class="fas fa-user"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="me-3" style="width: 36px; height: 36px; background-color: #96F027; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">KM</div>
+              <div>Kavindi Mihiranga</div>
+            </div>
+          </td>
+          <td>Engineering</td>
+          <td>Backend, APIs</td>
+          <td><span class="badge bg-secondary">Member</span></td>
+          <td><span class="status-dot online"></span> Online</td>
+          <td>
+            <div class="quick-actions">
+              <button class="quick-action-btn message-btn" title="Message">
+                <i class="fas fa-comment"></i>
+              </button>
+              <button class="quick-action-btn meet-btn" title="Meet">
+                <i class="fas fa-video"></i>
+              </button>
+              <button class="quick-action-btn profile-btn" title="Profile">
+                <i class="fas fa-user"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="me-3" style="width: 36px; height: 36px; background-color: #6E44FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">KB</div>
+              <div>Kinslee Ball</div>
+            </div>
+          </td>
+          <td>Marketing</td>
+          <td>Content, Social Media</td>
+          <td><span class="badge bg-warning text-dark">Admin</span></td>
+          <td><span class="status-dot away"></span> Away</td>
+          <td>
+            <div class="quick-actions">
+              <button class="quick-action-btn message-btn" title="Message">
+                <i class="fas fa-comment"></i>
+              </button>
+              <button class="quick-action-btn meet-btn" title="Meet">
+                <i class="fas fa-video"></i>
+              </button>
+              <button class="quick-action-btn profile-btn" title="Profile">
+                <i class="fas fa-user"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="me-3" style="width: 36px; height: 36px; background-color: #FF6B35; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">BH</div>
+              <div>Bryan Harrell</div>
+            </div>
+          </td>
+          <td>Sales</td>
+          <td>Enterprise Sales</td>
+          <td><span class="badge bg-secondary">Member</span></td>
+          <td><span class="status-dot online"></span> Online</td>
+          <td>
+            <div class="quick-actions">
+              <button class="quick-action-btn message-btn" title="Message">
+                <i class="fas fa-comment"></i>
+              </button>
+              <button class="quick-action-btn meet-btn" title="Meet">
+                <i class="fas fa-video"></i>
+              </button>
+              <button class="quick-action-btn profile-btn" title="Profile">
+                <i class="fas fa-user"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- AI Assistant Floating Button -->
+  <div class="ai-assistant" id="aiAssistantBtn">
+    <i class="fas fa-robot"></i>
+  </div>
+
+  <!-- AI Assistant Modal -->
+  <div class="ai-modal" id="aiModal">
+    <h5>Team Assistant</h5>
+    <div class="ai-message">
+      Hi Alex! I can help you find colleagues based on their expertise, department, or current availability.
+    </div>
+    <div class="ai-options">
+      <div class="ai-option">Who should I contact about API questions?</div>
+      <div class="ai-option">Show me all online HR team members</div>
+      <div class="ai-option">Find colleagues in the Engineering department</div>
+      <div class="ai-option">Who are the best contacts for sales questions?</div>
+    </div>
+  </div>
+
+  <script>
+    // AI Assistant Toggle
+    const aiBtn = document.getElementById('aiAssistantBtn');
+    const aiModal = document.getElementById('aiModal');
+    
+    aiBtn.addEventListener('click', () => {
+      aiModal.style.display = aiModal.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // Filter functionality
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const tableRows = document.querySelectorAll('tbody tr');
+    
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const filter = btn.dataset.filter;
+        tableRows.forEach(row => {
+          if (filter === 'all') {
+            row.style.display = '';
+          } else if (filter === 'online') {
+            const isOnline = row.querySelector('.status-dot').classList.contains('online');
+            row.style.display = isOnline ? '' : 'none';
+          } else if (filter === 'admin') {
+            const isAdmin = row.querySelector('td:nth-child(4)').textContent.includes('Admin');
+            row.style.display = isAdmin ? '' : 'none';
+          } else if (filter === 'member') {
+            const isMember = !row.querySelector('td:nth-child(4)').textContent.includes('Admin');
+            row.style.display = isMember ? '' : 'none';
+          }
+        });
+      });
+    });
+
+    // Sort functionality
+    const sortBtns = document.querySelectorAll('.sort-btn');
+    let currentSort = { column: null, direction: 1 };
+
+    sortBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const column = btn.dataset.sort;
+        const tbody = document.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+
+        // Update sort direction
+        if (currentSort.column === column) {
+          currentSort.direction *= -1;
+        } else {
+          currentSort.column = column;
+          currentSort.direction = 1;
+        }
+
+        // Update sort icons
+        sortBtns.forEach(b => b.innerHTML = '<i class="fas fa-sort"></i>');
+        btn.innerHTML = currentSort.direction === 1 ? 
+          '<i class="fas fa-sort-up"></i>' : 
+          '<i class="fas fa-sort-down"></i>';
+
+        // Sort rows
+        rows.sort((a, b) => {
+          const aValue = a.querySelector(`td:nth-child(${getColumnIndex(column)})`).textContent;
+          const bValue = b.querySelector(`td:nth-child(${getColumnIndex(column)})`).textContent;
+          
+          return aValue.localeCompare(bValue) * currentSort.direction;
+        });
+
+        // Reorder rows
+        rows.forEach(row => tbody.appendChild(row));
+      });
+    });
+
+    function getColumnIndex(column) {
+      const columns = ['name', 'dept', 'expertise', 'role', 'status'];
+      return columns.indexOf(column) + 1;
+    }
+
+    // Quick actions
+    document.querySelectorAll('.quick-action-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const row = btn.closest('tr');
+        const name = row.querySelector('td:first-child div:nth-child(2)').textContent;
+        
+        if (btn.classList.contains('message-btn')) {
+          alert(`Opening chat with ${name}`);
+        } else if (btn.classList.contains('meet-btn')) {
+          alert(`Scheduling meeting with ${name}`);
+        } else if (btn.classList.contains('profile-btn')) {
+          alert(`Viewing profile of ${name}`);
+        }
+      });
+    });
+
+    // Simulate AI response
+    document.querySelectorAll('.ai-option').forEach(option => {
+      option.addEventListener('click', () => {
+        const question = option.textContent;
+        let response = "";
+        
+        if (question.includes("API")) {
+          response = "For API questions, you should contact Kavindi Mihiranga from Engineering. She specializes in backend and API development.";
+        } else if (question.includes("HR")) {
+          response = "Jane Atkins is currently online from the HR team. She handles recruiting and onboarding.";
+        } else if (question.includes("Engineering")) {
+          response = "Engineering team members:\n- Aliza Hurley (Frontend)\n- Kavindi Mihiranga (Backend)";
+        } else if (question.includes("sales")) {
+          response = "For sales questions, Bryan Harrell in the Sales department is your best contact. He specializes in enterprise sales.";
+        }
+        
+        alert(response);
+        aiModal.style.display = 'none';
+      });
+    });
+  </script>
+</body>
+</html>
